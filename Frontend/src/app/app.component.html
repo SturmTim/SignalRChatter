@@ -1,0 +1,30 @@
+<div>
+  <div>
+    <label>Username:</label>
+    <input type="text" [(ngModel)]="username">
+    <label>Password:</label>
+    <input type="text" [(ngModel)]="pwd">
+    <button (click)="signIn()" [disabled]="isSignedIn">SignIn</button>
+    <button (click)="signOut()" [disabled]="!isSignedIn">SignOut</button>
+    <label *ngIf="isAdmin">Admin {{clientsNr}} clients</label>
+  </div>
+  <hr class="solid">
+  <div>
+    <input type="text" [(ngModel)]="message">
+    <button (click)="sendMessage()" [disabled]="!isSignedIn">Send</button>
+  </div>
+  <hr class="solid">
+  <table>
+    <tr>
+      <th>Timestamp</th>
+      <th>Username</th>
+      <th>Message</th>
+    </tr>
+    <tr *ngFor="let msg of messages.reverse()">
+      <td>{{msg.timestamp}}</td>
+      <td>{{msg.username}}</td>
+      <td>{{msg.message}}</td>
+  </table>
+</div>
+
+

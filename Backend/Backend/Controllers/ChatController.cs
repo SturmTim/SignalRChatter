@@ -21,7 +21,7 @@ public class ChatController : ControllerBase
     [HttpGet("clients")]
     public IEnumerable<ClientDto> Get()
     {
-        _hubContext.Clients.All.SendAsync("AdminNotification", "Server", "All clients are requested");
+        _hubContext.Clients.All.SendAsync("AdminNotification", "All clients are requested", "Admin", TimeOnly.FromDateTime(DateTime.Now).ToString("HH:mm:ss"));
         return _clientRepository.Clients.Values.Select(x => new ClientDto
         {
             Username = x.Username,
@@ -33,8 +33,8 @@ public class ChatController : ControllerBase
     [HttpPost("broadcast")]
     public void Broadcast(string message)
     {
-        _hubContext.Clients.All.SendAsync("AdminNotification", "Server", "A broadcast message is sent");
-        _hubContext.Clients.All.SendAsync("SendMessage", "Server", message);
+        _hubContext.Clients.All.SendAsync("NewMessage", "Admin", message, TimeOnly.FromDateTime(DateTime.Now).ToString("HH:mm:ss"));
+        _hubContext.Clients.All.SendAsync("AdminNotification", "A broadcast message is sent", "Admin", TimeOnly.FromDateTime(DateTime.Now).ToString("HH:mm:ss"));
     }
     
 }

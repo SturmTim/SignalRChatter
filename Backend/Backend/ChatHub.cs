@@ -21,11 +21,11 @@ public class ChatHub : Hub<IChatClient>
         _chatRepository.Clients.Add(Context.ConnectionId, new Client
         {
             Username = username,
-            RegisterTime = new TimeOnly(),
+            RegisterTime = TimeOnly.FromDateTime(DateTime.Now),
             LastMessageTime = new TimeOnly(0,0,0)
         });
 
-        Clients.All.ClientConnected(username);
+        Clients.All.ClientConnected(username, TimeOnly.FromDateTime(DateTime.Now).ToString("HH:mm:ss"));
         
         SendCurrentClientNumber();
 
@@ -40,7 +40,7 @@ public class ChatHub : Hub<IChatClient>
     
     public void SignOut()
     {
-        Clients.All.ClientDisconnected(_chatRepository.Clients[Context.ConnectionId].Username);
+        Clients.All.ClientDisconnected(_chatRepository.Clients[Context.ConnectionId].Username, TimeOnly.FromDateTime(DateTime.Now).ToString("HH:mm:ss"));
         _chatRepository.Clients.Remove(Context.ConnectionId);
         SendCurrentClientNumber();
     }
@@ -48,17 +48,18 @@ public class ChatHub : Hub<IChatClient>
     public void SendMessage(string message)
     {
         var client = _chatRepository.Clients[Context.ConnectionId];
-        client.LastMessageTime = new TimeOnly();
-        Clients.All.NewMessage(client.Username, message, new TimeOnly().ToString("HH:mm:ss"));
+        client.LastMessageTime = TimeOnly.FromDateTime(DateTime.Now);
+        Clients.All.NewMessage(client.Username, message, TimeOnly.FromDateTime(DateTime.Now).ToString("HH:mm:ss"));
     }
-    
-    public void AdminNotification(string message)
-    {
-        Clients.All.AdminNotification(message);
-    }
-    
+
     public void SendCurrentClientNumber()
     {
         Clients.All.NrClientsChanged(_chatRepository.Clients.Count);
+    }
+
+    public override Task OnDisconnectedAsync(Exception? exception)
+    {
+        SignOut();
+        return base.OnDisconnectedAsync(exception);
     }
 }

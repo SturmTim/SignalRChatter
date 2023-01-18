@@ -9,8 +9,20 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+string corsKey = "corsPolicy";
+
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<ClientRepository>();
+builder.Services.AddSingleton<ChatHub>();
+builder.Services.AddCors(options => options.AddPolicy(
+    corsKey,
+    x => x.
+        SetIsOriginAllowed(_ => true)
+        .WithOrigins("http://localhost:4200")
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials()
+));
 
 var app = builder.Build();
 
@@ -21,7 +33,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseCors(corsKey);
+//app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthorization();
 app.MapHub<ChatHub>("/chat");

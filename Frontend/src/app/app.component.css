@@ -1,0 +1,9 @@
+hr.solid {
+  border-top: 3px solid #bbb;
+}
+table{
+  width: 50%;
+}
+th, td {
+  text-align: center;
+}
