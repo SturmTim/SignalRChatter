@@ -48,10 +48,7 @@ export class AppComponent implements OnInit{
     )
 
     this.hubConnection.on('AdminNotification', (message: string, name: string, timestamp: string) => {
-      if (this.isAdmin) {
-        console.log(name)
         this.AddMessage(message, name, timestamp)
-      }
     })
 
     this.connect();

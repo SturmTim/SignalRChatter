@@ -26,11 +26,11 @@ public class ChatHub : Hub<IChatClient>
         });
 
         Clients.All.ClientConnected(username, TimeOnly.FromDateTime(DateTime.Now).ToString("HH:mm:ss"));
-        
         SendCurrentClientNumber();
 
         if (username.StartsWith("Admin"))
         {
+            Groups.AddToGroupAsync(Context.ConnectionId, "Admins");
             return true;
         }
 
@@ -54,7 +54,7 @@ public class ChatHub : Hub<IChatClient>
 
     public void SendCurrentClientNumber()
     {
-        Clients.All.NrClientsChanged(_chatRepository.Clients.Count);
+        Clients.Group("Admins").NrClientsChanged(_chatRepository.Clients.Count);
     }
 
     public override Task OnDisconnectedAsync(Exception? exception)
